@@ -186,7 +186,7 @@ public:
     };
 };
 
-class ProxyAutomaton : public ISellSystem{
+class ProxyAutomaton : public ISellSystem {
 
 // сделано то что снизу, но оно совсем не верно. Потому что я дурачек =)
 private:
@@ -216,7 +216,7 @@ private:
         log_time();
     }
 
-    void print_proxy_report(){
+    void print_proxy_report() {
 //        Печатаем интересующие репорты из памяти прокси
         std::cout << "location - " << location << std::endl;
         std::cout << "all_money_report - " << all_money_report << std::endl;
@@ -227,13 +227,13 @@ public:
         proxy_automat_take();
     }
 
-    ~ProxyAutomaton(){
+    ~ProxyAutomaton() {
         delete _real_automation;
     }
 
     void changePrice(std::string name, float newPrice) override {
         // поскольку мы правим массив с данным, то по сути стучимся в автомат
-        if(CheckAccess()) {
+        if (CheckAccess()) {
             _real_automation->changePrice(name, newPrice);
         } else {
             std::cout << "Not connect" << std::endl;
@@ -243,7 +243,7 @@ public:
 
     void sellProduct(std::string name) override {
         // поскольку мы правим массив с данным, то по сути стучимся в автомат
-        if(CheckAccess()) {
+        if (CheckAccess()) {
             _real_automation->sellProduct(name);
         } else {
             std::cout << "Not connect" << std::endl;
@@ -253,7 +253,7 @@ public:
 
     void addProduct(std::string name, size_t count) override {
         // поскольку мы правим массив с данным, то по сути стучимся в автомат
-        if(CheckAccess()) {
+        if (CheckAccess()) {
             _real_automation->addProduct(name, count);
         } else {
             std::cout << "Not connect" << std::endl;
@@ -269,9 +269,9 @@ public:
     void proxy_report() {
         // при наличии доступа, если данным более часа 3600 сек, достаем свежие репорты и печатаем их,
         // ежели репорты свежее часа просто печатаем их из памяти прокси.
-        if(CheckAccess()) {
+        if (CheckAccess()) {
             time_t this_time = time(nullptr);
-            if((this_time - last_report_time) > static_cast<time_t>(3600)) {
+            if ((this_time - last_report_time) > static_cast<time_t>(3600)) {
                 proxy_automat_take();
                 print_proxy_report();
             } else {
@@ -281,7 +281,7 @@ public:
     }
 
     void goodsCountReport() const {
-        if(CheckAccess()) {
+        if (CheckAccess()) {
             _real_automation->goodsCountReport();
         } else {
             std::cout << "Not connect" << std::endl;
@@ -289,7 +289,7 @@ public:
     };
 
     void goodsPriceReport() const {
-        if(CheckAccess()) {
+        if (CheckAccess()) {
             _real_automation->goodsPriceReport();
         } else {
             std::cout << "Not connect" << std::endl;
@@ -314,8 +314,8 @@ int main() {
     std::cout << std::endl;
     std::cout << "____1/2_____" << std::endl;
 
-    auto* real_automat = new Automaton("Ashan", 100);
-    auto* proxy_automat = new ProxyAutomaton(real_automat);
+    auto *real_automat = new Automaton("Ashan", 100);
+    auto *proxy_automat = new ProxyAutomaton(real_automat);
     proxy_automat->proxy_report();
 
 
