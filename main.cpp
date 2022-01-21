@@ -187,7 +187,7 @@ public:
 };
 
 class ProxyAutomaton : public ISellSystem{
-    
+
 // сделано то что снизу, но оно совсем не верно. Потому что я дурачек =)
 private:
     std::string location;
@@ -209,12 +209,15 @@ private:
     }
 
     void proxy_automat_take() {
+        // остальные репорты соут, следовательно если мы гетером не будем забирать массивы, то это только стучаться туда
+        // посему будем считать что остальные репорты нас в прокси не интересуют
         location = _real_automation->getLocationReport();
         all_money_report = _real_automation->allMoneyReport();
         log_time();
     }
 
     void print_proxy_report(){
+//        Печатаем интересующие репорты из памяти прокси
         std::cout << "location - " << location << std::endl;
         std::cout << "all_money_report - " << all_money_report << std::endl;
     }
@@ -229,23 +232,43 @@ public:
     }
 
     void changePrice(std::string name, float newPrice) override {
-        _real_automation->changePrice(name, newPrice);
+        // поскольку мы правим массив с данным, то по сути стучимся в автомат
+        if(CheckAccess()) {
+            _real_automation->changePrice(name, newPrice);
+        } else {
+            std::cout << "Not connect" << std::endl;
+        }
+
     }
 
     void sellProduct(std::string name) override {
-        _real_automation->sellProduct(name);
+        // поскольку мы правим массив с данным, то по сути стучимся в автомат
+        if(CheckAccess()) {
+            _real_automation->sellProduct(name);
+        } else {
+            std::cout << "Not connect" << std::endl;
+        }
+
     }
 
     void addProduct(std::string name, size_t count) override {
-        _real_automation->addProduct(name, count);
+        // поскольку мы правим массив с данным, то по сути стучимся в автомат
+        if(CheckAccess()) {
+            _real_automation->addProduct(name, count);
+        } else {
+            std::cout << "Not connect" << std::endl;
+        }
     }
 
 
     [[nodiscard]] time_t get_log_time() const {
+        // доступ, что бы вытащить время
         return last_report_time;
     }
 
     void proxy_report() {
+        // при наличии доступа, если данным более часа 3600 сек, достаем свежие репорты и печатаем их,
+        // ежели репорты свежее часа просто печатаем их из памяти прокси.
         if(CheckAccess()) {
             time_t this_time = time(nullptr);
             if((this_time - last_report_time) > static_cast<time_t>(3600)) {
