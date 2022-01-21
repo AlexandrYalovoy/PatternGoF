@@ -1,6 +1,7 @@
 #include <iostream>
 #include <map>
 #include "mutex"
+#include "ctime"
 
 std::mutex c_c_st_cb;
 
@@ -67,7 +68,7 @@ private:
         delete _uniqueInstance;
     }
 
-    //проверка есть ли вообще экземпляр класса
+    //указатель на самого себя.
     static SingleToneChocolateBoiler *_uniqueInstance;
 
 public:
@@ -185,6 +186,66 @@ public:
     };
 };
 
+class ProxyAutomaton {
+// ISellSystem наследовать смысла нет, ибо тут некуда этио применить
+// Воообще логика прокси к данному классу не подходит.
+// В классе на который мы делаем прокси должны быть гетеры основных параметров
+// После мы должны собрать всю инфу с репортами от основного класса, и раз в час вызывать методы удаленного автомата
+// и поддятигивать репорты и результаты, и тогда есть смысл реализовать
+// Ну вобщем я не совсем понял физическую работу)
+private:
+    std::string location;
+    double all_money_report;
+    // у в прокси остаольное неописано что должно храниться, и не указано что должно от прокси передаваться.
+
+    time_t last_report_time{};
+
+    Automaton *_real_automation{};
+
+    bool CheckAccess() const {
+        std::cout << "Proxy access done" << std::endl;
+        return true;
+    }
+
+    void log_time() {
+        last_report_time = time(nullptr);
+    }
+
+    void proxy_automat_take() {
+        location = _real_automation->getLocationReport();
+        all_money_report = _real_automation->allMoneyReport();
+        log_time();
+    }
+
+    void print_proxy_report(){
+        std::cout << "location - " << location << std::endl;
+        std::cout << "all_money_report - " << all_money_report << std::endl;
+    }
+
+public:
+    ProxyAutomaton(Automaton *_real_obj) : _real_automation(new Automaton(*_real_obj)) {
+        proxy_automat_take();
+    }
+
+    ~ProxyAutomaton(){
+        delete _real_automation;
+    }
+
+
+    [[nodiscard]] time_t get_log_time() const {
+        return last_report_time;
+    }
+
+    void proxy_report() {
+        time_t this_time = time(nullptr);
+        if((this_time - last_report_time) > static_cast<time_t>(3600)) {
+            proxy_automat_take();
+            print_proxy_report();
+        } else {
+            print_proxy_report();
+        }
+    }
+};
 
 int main() {
     std::cout << "____1/1_____" << std::endl;
@@ -202,6 +263,10 @@ int main() {
 
     std::cout << std::endl;
     std::cout << "____1/2_____" << std::endl;
+
+    Automaton* real_automat = new Automaton("Ashan", 100);
+    ProxyAutomaton* proxy_automat = new ProxyAutomaton(real_automat);
+    proxy_automat->proxy_report();
 
 
     return 0;
