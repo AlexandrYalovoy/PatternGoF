@@ -279,6 +279,22 @@ public:
             }
         }
     }
+
+    void goodsCountReport() const {
+        if(CheckAccess()) {
+            _real_automation->goodsCountReport();
+        } else {
+            std::cout << "Not connect" << std::endl;
+        }
+    };
+
+    void goodsPriceReport() const {
+        if(CheckAccess()) {
+            _real_automation->goodsPriceReport();
+        } else {
+            std::cout << "Not connect" << std::endl;
+        }
+    };
 };
 
 int main() {
