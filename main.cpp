@@ -153,7 +153,7 @@ public:
         goods_price[name] = newPrice;
     }
 
-    void sellProduct(std::string name) {
+    void sellProduct(std::string name) override {
         if (goods_count[name] > 0) {
             recieved_money += goods_price[name];
         } else {
@@ -161,7 +161,7 @@ public:
         }
     }
 
-    void addProduct(std::string name, size_t count) {
+    void addProduct(std::string name, size_t count) override {
         goods_count[name] += count;
     }
 
@@ -186,30 +186,20 @@ public:
     };
 };
 
-class ProxyAutomaton {
-// ISellSystem наследовать смысла нет, ибо тут некуда этио применить
-// Воообще логика прокси к данному классу не подходит.
-// В классе на который мы делаем прокси должны быть гетеры основных параметров
-// После мы должны собрать всю инфу с репортами от основного класса, и раз в час вызывать методы удаленного автомата
-// и поддятигивать репорты и результаты, и тогда есть смысл реализовать
-// Ну вобщем я не совсем понял физическую работу)
-//
-// В общем мне кажется должно было быть так, Мы наследуем ISellSystem, в Automaton должны быть гетеры приватных полей,
-// потом мы эти поля раз в час подтягиваем, и в прокси работаем с объектом как обычно. а операции добавления/правки цен
-// реализовавыть через перегруженные методы но уже вызывая реальнеый объект используя сеттеры.
-// Но поскольку базовый клас гетеров не содержит следовательно так делать нельзя.
-//
-// посему сделано то что снизу, но оно совсем не верно. Потому что я дурачек =)
+class ProxyAutomaton : public ISellSystem{
+    
+// сделано то что снизу, но оно совсем не верно. Потому что я дурачек =)
 private:
     std::string location;
-    double all_money_report;
+    double all_money_report{};
     // у в прокси остаольное неописано что должно храниться, и не указано что должно от прокси передаваться.
 
     time_t last_report_time{};
 
     Automaton *_real_automation{};
 
-    bool CheckAccess() const {
+    [[nodiscard]] bool CheckAccess() const {
+        // ну типа всегда доступен) но для этого я бы положил флаг в Automaton раный тру, и пробовал бы его достовать
         std::cout << "Proxy access done" << std::endl;
         return true;
     }
@@ -238,18 +228,32 @@ public:
         delete _real_automation;
     }
 
+    void changePrice(std::string name, float newPrice) override {
+        _real_automation->changePrice(name, newPrice);
+    }
+
+    void sellProduct(std::string name) override {
+        _real_automation->sellProduct(name);
+    }
+
+    void addProduct(std::string name, size_t count) override {
+        _real_automation->addProduct(name, count);
+    }
+
 
     [[nodiscard]] time_t get_log_time() const {
         return last_report_time;
     }
 
     void proxy_report() {
-        time_t this_time = time(nullptr);
-        if((this_time - last_report_time) > static_cast<time_t>(3600)) {
-            proxy_automat_take();
-            print_proxy_report();
-        } else {
-            print_proxy_report();
+        if(CheckAccess()) {
+            time_t this_time = time(nullptr);
+            if((this_time - last_report_time) > static_cast<time_t>(3600)) {
+                proxy_automat_take();
+                print_proxy_report();
+            } else {
+                print_proxy_report();
+            }
         }
     }
 };
@@ -271,8 +275,8 @@ int main() {
     std::cout << std::endl;
     std::cout << "____1/2_____" << std::endl;
 
-    Automaton* real_automat = new Automaton("Ashan", 100);
-    ProxyAutomaton* proxy_automat = new ProxyAutomaton(real_automat);
+    auto* real_automat = new Automaton("Ashan", 100);
+    auto* proxy_automat = new ProxyAutomaton(real_automat);
     proxy_automat->proxy_report();
 
 
