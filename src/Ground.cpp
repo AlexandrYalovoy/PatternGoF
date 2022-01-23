@@ -4,6 +4,7 @@
 #include "enums/CraterSize.h"
 #include "MyTools.h"
 #include <iostream>
+#include <cstring>
 
 void Ground::Draw() const
 {

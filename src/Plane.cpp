@@ -17,3 +17,7 @@ void Plane::Draw() const
     ScreenSingleton::getInstance().GotoXY(x + 3, y + 1);
     std::cout << "////";
 }
+
+void Plane::Accept(IVisitor* v) {
+    v->visit(this);
+}

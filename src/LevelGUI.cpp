@@ -1,5 +1,6 @@
 #include "LevelGUI.h"
 #include <iostream>
+#include <cstring>
 #include "MyTools.h"
 #include "ScreenSingleton.h"
 

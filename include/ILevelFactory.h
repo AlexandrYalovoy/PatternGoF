@@ -1,0 +1,10 @@
+#ifndef SBOMBER_ILEVELFACTORY_H
+#define SBOMBER_ILEVELFACTORY_H
+
+
+class ILevelFactory {
+
+};
+
+
+#endif //SBOMBER_ILEVELFACTORY_H

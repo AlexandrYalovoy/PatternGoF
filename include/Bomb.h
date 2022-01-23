@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DynamicObject.h"
+#include "IVisitor.h"
 
 class Bomb : public DynamicObject
 {
@@ -10,6 +11,9 @@ public:
 
 	void Draw() const override;
 
+    void Accept(IVisitor* pVisitor) override;
+
+    ~Bomb() override;
 private:
 
 };
