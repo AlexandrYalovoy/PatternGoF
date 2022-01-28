@@ -240,20 +240,24 @@ public:
 
 class TextAdapter : public IShape {
 private:
+    //у раз адаптер то я решил что мы здесь храним только на объект с которым работаем и меняем все в нем
     Text *_text{};
 public:
     explicit TextAdapter(Text *text) : _text(text) {};
 
+    // по входу имеем процент, берем данные из объекта, умножаем на долю единицы, вертаем в объект
     void scale(double scale_percentage) override {
         int spam_size = _text->getSize();
         spam_size *= static_cast<int>((scale_percentage / static_cast<double>(100)));
         _text->setSize(spam_size);
     }
 
+    // просто зовем метод объекта
     void rotate(double _angle) override {
         _text->rotate(_angle);
     }
 
+    // поворот для объекта == реверс для текста, посему завем метод самого объекта
     void flip() override {
         _text->reverse();
     }
