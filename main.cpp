@@ -183,12 +183,12 @@ public:
     Figure(int width, int height) : width(width), height(height), angle(0.0), isFlipped(false) {}
 
     void scale(double scale_percentage) override {
-        width *= scale_percentage;
-        height *= scale_percentage;
+        width *= static_cast<int>(scale_percentage);
+        height *= static_cast<int>(scale_percentage);
     }
 
-    void rotate(double angle) override {
-        angle += angle;
+    void rotate(double _angle) override {
+        angle += _angle;
     }
 
     void flip() override {
@@ -209,10 +209,10 @@ private:
     bool isReversed;
     std::string text;
 public:
-    Text(const std::string text, int size, double angle, bool isReversed) : text(text), size(size), angle(0.0),
-                                                                            isReversed(false) {}
+    Text(const std::string &text, int size, double angle, bool isReversed) : text(text), size(size), angle(0.0),
+                                                                             isReversed(false) {}
 
-private:
+public:
     void newSize(int newSize) override {
         size = newSize;
     }
@@ -228,33 +228,36 @@ private:
             text[text.size() - 1 - i] = c;
         }
     }
+
+    void setSize(int _size) {
+        size = _size;
+    }
+
+    [[nodiscard]] int getSize() const {
+        return size;
+    }
 };
 
 class TextAdapter : public IShape {
 private:
-    int size = 16;
-    double _angle;
-    bool isReversed;
-    std::string text;
+    Text *_text{};
 public:
-    TextAdapter(const std::string text, int size, double _angle, bool isReversed) : text(text), size(size), _angle(0.0),
-                                                                                   isReversed(false) {};
+    explicit TextAdapter(Text *text) : _text(text) {};
 
     void scale(double scale_percentage) override {
-        size *= static_cast<int>((scale_percentage / static_cast<double>(100)));
+        int spam_size = _text->getSize();
+        spam_size *= static_cast<int>((scale_percentage / static_cast<double>(100)));
+        _text->setSize(spam_size);
     }
 
-    void rotate(double angle) override {
-        _angle = angle;
+    void rotate(double _angle) override {
+        _text->rotate(_angle);
     }
 
     void flip() override {
-        for (int i = 0; i < text.size() / 2; ++i) {
-            char c = text[i];
-            text[i] = text[text.size() - 1 - i];
-            text[text.size() - 1 - i] = c;
-        }
+        _text->reverse();
     }
+
 };
 
 
