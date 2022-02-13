@@ -116,6 +116,8 @@ private:
 public:
     GuardianPlayer() = default;
 
+    ~GuardianPlayer() = default;
+
     explicit GuardianPlayer(CreatorPlayer &_create_payer_exempl) {
         _protected_create_payer_exempl = _create_payer_exempl;
         add_player_temp(_create_payer_exempl);
@@ -151,6 +153,8 @@ private:
 public:
     CaretakerPlayer(CreatorPlayer &ref_creator_player, GuardianPlayer &ref_guardian_player)
             : _creator_player(ref_creator_player), _guardian_player(ref_guardian_player) {}
+
+    ~CaretakerPlayer() = default;
 
     void changeSpeed(int change) {
         _guardian_player.add_player_temp(_creator_player);
