@@ -109,7 +109,7 @@ private:
 public:
     GuardianPlayer() = default;
 
-    explicit GuardianPlayer(CreatorPlayer& _create_payer_exempl) {
+    explicit GuardianPlayer(CreatorPlayer &_create_payer_exempl) {
         _protected_create_payer_exempl = _create_payer_exempl;
         add_player_temp(_create_payer_exempl);
     }
@@ -136,24 +136,28 @@ public:
 // Опекун
 class CaretakerPlayer {
 private:
-    CreatorPlayer _creator_player;
-    GuardianPlayer _guardian_player;
+    CreatorPlayer &_creator_player;
+    GuardianPlayer &_guardian_player;
 public:
-    CaretakerPlayer(CreatorPlayer &ref_creator_player, GuardianPlayer &ref_guardian_player) {
-        _creator_player = ref_creator_player;
-        _guardian_player = ref_guardian_player;
-    }
+    CaretakerPlayer(CreatorPlayer &ref_creator_player, GuardianPlayer &ref_guardian_player)
+            : _creator_player(ref_creator_player), _guardian_player(ref_guardian_player) {}
 
-    void changeSpeed(int change){
+    void changeSpeed(int change) {
         _guardian_player.add_player_temp(_creator_player);
         int spam_speed = _creator_player.getSpeed() + change;
         _creator_player.setSpeed(spam_speed);
     }
 
-    void changeHp(int change){
+    void changeHp(int change) {
         _guardian_player.add_player_temp(_creator_player);
         float spam_hp = _creator_player.getHp() + static_cast<float>(change);
         _creator_player.setHp(spam_hp);
+    }
+
+    void last_state_return() {
+        CreatorPlayer spam_temp{};
+        spam_temp = _guardian_player.pop_player_temp();
+        _creator_player = spam_temp;
     }
 
     [[nodiscard]] float getHp() const {
