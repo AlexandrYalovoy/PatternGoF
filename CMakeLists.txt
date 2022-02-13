@@ -3,4 +3,4 @@ project(PatternGoF)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(PatternGoF main.cpp)
+add_executable(PatternGoF main.cpp L1.cpp L1.h)
